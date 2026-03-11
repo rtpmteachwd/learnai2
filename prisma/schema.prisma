@@ -1,0 +1,290 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "sqlite"
+  url       = env("DATABASE_URL")
+  // For PostgreSQL (Vercel/Railway), change to:
+  // provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String                 @id @default(cuid())
+  email                 String                 @unique
+  password              String
+  name                  String
+  role                  UserRole               @default(STUDENT)
+  avatar                String?
+  disabilityType        DisabilityType         @default(NONE)
+  preferredFontSize     Int                    @default(16)
+  highContrastMode      Boolean                @default(false)
+  screenReaderMode      Boolean                @default(false)
+  keyboardNavOnly       Boolean                @default(false)
+  grade                 String?
+  section               String?
+  schoolId              String?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  lastLoginAt           DateTime?
+  activityLogs          ActivityLog[]
+  assignmentSubmissions AssignmentSubmission[]
+  teachingCourses       Course[]               @relation("TeachingCourses")
+  createdCourses        Course[]               @relation("CreatedCourses")
+  enrollments           Enrollment[]
+  feedbacks             Feedback[]
+  notifications         Notification[]
+  performanceRecords    PerformanceRecord[]
+  quizAttempts          QuizAttempt[]
+
+  @@map("users")
+}
+
+model Course {
+  id              String       @id @default(cuid())
+  title           String
+  description     String?
+  subject         String
+  gradeLevel      String
+  thumbnail       String?
+  difficultyLevel Int          @default(3)
+  isPublished     Boolean      @default(false)
+  isArchived      Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  creatorId       String
+  teacherId       String
+  assignments     Assignment[]
+  teacher         User         @relation("TeachingCourses", fields: [teacherId], references: [id])
+  creator         User         @relation("CreatedCourses", fields: [creatorId], references: [id])
+  enrollments     Enrollment[]
+  lessons         Lesson[]
+  quizzes         Quiz[]
+
+  @@map("courses")
+}
+
+model Enrollment {
+  id           String   @id @default(cuid())
+  studentId    String
+  courseId     String
+  enrolledAt   DateTime @default(now())
+  progress     Float    @default(0)
+  status       String   @default("active")
+  currentLevel Int      @default(3)
+  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student      User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+  @@map("enrollments")
+}
+
+model Lesson {
+  id              String   @id @default(cuid())
+  courseId        String
+  title           String
+  description     String?
+  content         String
+  videoUrl        String?
+  audioUrl        String?
+  order           Int
+  difficultyLevel Int      @default(3)
+  estimatedTime   Int      @default(30)
+  hasTranscript   Boolean  @default(false)
+  transcript      String?
+  hasSignLanguage Boolean  @default(false)
+  signLanguageUrl String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  referenceName   String?
+  referenceUrl    String?
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("lessons")
+}
+
+model Quiz {
+  id           String        @id @default(cuid())
+  courseId     String
+  lessonId     String?
+  title        String
+  description  String?
+  timeLimit    Int           @default(30)
+  passingScore Float         @default(60)
+  maxAttempts  Int           @default(3)
+  isAdaptive   Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  questions    Question[]
+  attempts     QuizAttempt[]
+  course       Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("quizzes")
+}
+
+model Question {
+  id              String        @id @default(cuid())
+  quizId          String
+  questionText    String
+  questionType    String        @default("multiple_choice")
+  options         String?
+  correctAnswer   String
+  explanation     String?
+  points          Int           @default(1)
+  difficultyLevel Int           @default(3)
+  hasAudio        Boolean       @default(false)
+  audioUrl        String?
+  hasImage        Boolean       @default(false)
+  imageUrl        String?
+  hintUrl         String?
+  hintName        String?
+  createdAt       DateTime      @default(now())
+  quiz            Quiz          @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  attempts        QuizAttempt[]
+
+  @@map("questions")
+}
+
+model QuizAttempt {
+  id              String    @id @default(cuid())
+  quizId          String
+  studentId       String
+  questionId      String?
+  answers         String
+  score           Float?
+  passed          Boolean   @default(false)
+  startedAt       DateTime  @default(now())
+  completedAt     DateTime?
+  needsGrading    Boolean   @default(false)
+  teacherComments String?
+  gradedBy        String?
+  gradedAt        DateTime?
+  usedTTS         Boolean   @default(false)
+  usedASR         Boolean   @default(false)
+  usedSignLang    Boolean   @default(false)
+  student         User      @relation(fields: [studentId], references: [id])
+  question        Question? @relation(fields: [questionId], references: [id])
+  quiz            Quiz      @relation(fields: [quizId], references: [id])
+
+  @@map("quiz_attempts")
+}
+
+model Assignment {
+  id                  String                 @id @default(cuid())
+  courseId            String
+  title               String
+  description         String
+  dueDate             DateTime
+  maxScore            Int                    @default(100)
+  allowLateSubmission Boolean                @default(true)
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  submissions         AssignmentSubmission[]
+  course              Course                 @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("assignments")
+}
+
+model AssignmentSubmission {
+  id                String     @id @default(cuid())
+  assignmentId      String
+  studentId         String
+  content           String?
+  fileUrl           String?
+  submittedAt       DateTime   @default(now())
+  score             Float?
+  feedback          String?
+  gradedAt          DateTime?
+  gradedBy          String?
+  needsResubmission Boolean    @default(false)
+  resubmissionNote  String?
+  usedTTS           Boolean    @default(false)
+  usedASR           Boolean    @default(false)
+  usedSignLang      Boolean    @default(false)
+  student           User       @relation(fields: [studentId], references: [id])
+  assignment        Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, studentId])
+  @@map("assignment_submissions")
+}
+
+model PerformanceRecord {
+  id         String   @id @default(cuid())
+  studentId  String
+  courseId   String?
+  type       String
+  score      Float
+  maxScore   Float
+  percentage Float
+  recordedAt DateTime @default(now())
+  aiInsights String?
+  student    User     @relation(fields: [studentId], references: [id])
+
+  @@map("performance_records")
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  category  String?
+  message   String
+  rating    Int?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("feedbacks")
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  resource   String?
+  resourceId String?
+  details    String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@map("activity_logs")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+enum UserRole {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum DisabilityType {
+  VISUAL_IMPAIRMENT
+  HEARING_IMPAIRMENT
+  SPEECH_IMPAIRMENT
+  LEARNING_DISABILITY
+  PHYSICAL_DISABILITY
+  MULTIPLE_DISABILITIES
+  NONE
+}
