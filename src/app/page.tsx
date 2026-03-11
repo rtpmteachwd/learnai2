@@ -240,7 +240,14 @@ export default function Home() {
       <Sidebar onLogout={handleLogout} onHelpClick={() => setIsHelpOpen(true)} />
 
       {/* Main Content Area */}
-      <div className={cn('transition-all duration-300', sidebarOpen ? 'ml-64' : 'ml-16')}>
+      <div className={cn(
+        'transition-all duration-300',
+        // Mobile: no margin (sidebar is overlay)
+        'ml-0',
+        // Desktop: margin based on sidebar state
+        'md:ml-64',
+        !sidebarOpen && 'md:ml-16'
+      )}>
         {/* Header */}
         <Header />
 
@@ -251,7 +258,8 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="p-4 border-t bg-card/50 text-center text-sm text-muted-foreground">
-          <p>© 2024 LearnAI - AI-Powered Inclusive LMS | <span className="ml-2">DepEd Aligned | SDG 4 Compliant</span></p>
+          <p className="hidden md:inline">© 2024 LearnAI - AI-Powered Inclusive LMS | DepEd Aligned | SDG 4 Compliant</p>
+          <p className="md:hidden">© 2024 LearnAI</p>
         </footer>
       </div>
 

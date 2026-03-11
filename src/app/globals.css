@@ -184,3 +184,44 @@
 .keyboard-nav-only *:focus:not(:focus-visible) {
   outline: none !important;
 }
+
+/* Hide scrollbar utility class */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile responsive tabs */
+@media (max-width: 768px) {
+  [data-slot="tabs-trigger"] {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    font-size: 0.75rem;
+  }
+  
+  [data-slot="tabs-trigger"] svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (max-width: 768px) {
+  button, 
+  a, 
+  input, 
+  select, 
+  textarea {
+    min-height: 44px;
+  }
+  
+  /* Add padding for mobile menu button */
+  .dashboard-content {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}

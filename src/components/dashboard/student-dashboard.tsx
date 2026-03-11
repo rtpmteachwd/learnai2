@@ -573,58 +573,58 @@ export function StudentDashboard() {
 
   // Main Dashboard View
   return (
-    <div className="p-6 space-y-6" style={{ fontSize: `${fontSize}px` }}>
+    <div className="p-3 md:p-6 space-y-4 md:space-y-6" style={{ fontSize: `${fontSize}px` }}>
       {/* Welcome Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Welcome, {user?.name}! 👋</h1>
-          <p className="text-muted-foreground">Ready to continue your learning journey?</p>
+          <h1 className="text-xl md:text-2xl font-bold">Welcome, {user?.name}! 👋</h1>
+          <p className="text-sm md:text-base text-muted-foreground">Ready to continue your learning journey?</p>
         </div>
         <TTSButton text={`Welcome ${user?.name}. You have ${courses.length} courses in progress.`} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs md:text-sm font-medium">Active Courses</CardTitle>
+            <BookOpen className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{courses.length}</div>
+            <div className="text-lg md:text-2xl font-bold">{courses.length}</div>
             <p className="text-xs text-muted-foreground">In progress</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Score</CardTitle>
-            <Trophy className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs md:text-sm font-medium">Average Score</CardTitle>
+            <Trophy className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analytics?.stats?.avgScore?.toFixed(1) || 0}%</div>
+            <div className="text-lg md:text-2xl font-bold">{analytics?.stats?.avgScore?.toFixed(1) || 0}%</div>
             <p className="text-xs text-muted-foreground">Overall performance</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Quizzes Passed</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs md:text-sm font-medium">Quizzes Passed</CardTitle>
+            <Target className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analytics?.stats?.passedQuizzes || 0}</div>
+            <div className="text-lg md:text-2xl font-bold">{analytics?.stats?.passedQuizzes || 0}</div>
             <p className="text-xs text-muted-foreground">Pass rate: {analytics?.stats?.quizPassRate?.toFixed(0) || 0}%</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Assignments</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs md:text-sm font-medium">Assignments</CardTitle>
+            <Calendar className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{assignments.length}</div>
+            <div className="text-lg md:text-2xl font-bold">{assignments.length}</div>
             <p className="text-xs text-muted-foreground">Pending</p>
           </CardContent>
         </Card>
@@ -633,16 +633,16 @@ export function StudentDashboard() {
       {/* AI Assistive Features Notice */}
       <Card className="border-primary/20 bg-primary/5">
         <CardContent className="pt-4">
-          <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-3 md:gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <Volume2 className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium">Text-to-Speech</span>
+              <Volume2 className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+              <span className="text-xs md:text-sm font-medium">Text-to-Speech</span>
             </div>
             <div className="flex items-center gap-2">
-              <Mic className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium">Speech-to-Text</span>
+              <Mic className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+              <span className="text-xs md:text-sm font-medium">Speech-to-Text</span>
             </div>
-            <p className="text-sm text-muted-foreground ml-auto">
+            <p className="text-xs md:text-sm text-muted-foreground w-full sm:w-auto sm:ml-auto">
               Use the accessibility toolbar (⚙️) to enable AI assistive features
             </p>
           </div>
@@ -655,38 +655,45 @@ export function StudentDashboard() {
         onValueChange={setActiveTab}
         className="space-y-4"
       >
-        <TabsList>
-          <TabsTrigger value="courses" onClick={() => setActiveSection('courses')}>
-            <BookOpen className="h-4 w-4 mr-2" />
-            My Courses
+        <TabsList className="w-full overflow-x-auto">
+          <TabsTrigger value="courses" onClick={() => setActiveSection('courses')} className="gap-1 md:gap-2">
+            <BookOpen className="h-4 w-4" />
+            <span className="hidden sm:inline">My Courses</span>
+            <span className="sm:hidden">Courses</span>
           </TabsTrigger>
-          <TabsTrigger value="results" onClick={() => setActiveSection('quizzes')}>
-            <Trophy className="h-4 w-4 mr-2" />
-            My Results
+          <TabsTrigger value="results" onClick={() => setActiveSection('quizzes')} className="gap-1 md:gap-2">
+            <Trophy className="h-4 w-4" />
+            <span className="hidden sm:inline">My Results</span>
+            <span className="sm:hidden">Results</span>
           </TabsTrigger>
-          <TabsTrigger value="assignments" onClick={() => setActiveSection('dashboard')}>
-            <Calendar className="h-4 w-4 mr-2" />
-            Assignments
+          <TabsTrigger value="assignments" onClick={() => setActiveSection('dashboard')} className="gap-1 md:gap-2">
+            <Calendar className="h-4 w-4" />
+            <span className="hidden sm:inline">Assignments</span>
+            <span className="sm:hidden">Tasks</span>
           </TabsTrigger>
           {signLanguageEnabled && (
-            <TabsTrigger value="signlang" onClick={() => setActiveSection('dashboard')}>
-              <Brain className="h-4 w-4 mr-2" />
-              Sign Language
+            <TabsTrigger value="signlang" onClick={() => setActiveSection('dashboard')} className="gap-1 md:gap-2">
+              <Brain className="h-4 w-4" />
+              <span className="hidden sm:inline">Sign Language</span>
+              <span className="sm:hidden">Sign</span>
             </TabsTrigger>
           )}
-          <TabsTrigger value="progress" onClick={() => setActiveSection('progress')}>
-            <TrendingUp className="h-4 w-4 mr-2" />
-            My Progress
+          <TabsTrigger value="progress" onClick={() => setActiveSection('progress')} className="gap-1 md:gap-2">
+            <TrendingUp className="h-4 w-4" />
+            <span className="hidden sm:inline">My Progress</span>
+            <span className="sm:hidden">Progress</span>
           </TabsTrigger>
-          <TabsTrigger value="feedback" onClick={() => setActiveSection('feedback')}>
-            <MessageSquare className="h-4 w-4 mr-2" />
-            Feedback
+          <TabsTrigger value="feedback" onClick={() => setActiveSection('feedback')} className="gap-1 md:gap-2">
+            <MessageSquare className="h-4 w-4" />
+            <span className="hidden sm:inline">Feedback</span>
+            <span className="sm:hidden">Feedback</span>
           </TabsTrigger>
           {/* SPED-Exclusive Tab - Only visible for students with learning disability */}
           {hasLearningDisability && (
-            <TabsTrigger value="sped-features" onClick={() => setActiveSection('dashboard')}>
-              <Sparkles className="h-4 w-4 mr-2" />
-              My Helper Tools
+            <TabsTrigger value="sped-features" onClick={() => setActiveSection('dashboard')} className="gap-1 md:gap-2">
+              <Sparkles className="h-4 w-4" />
+              <span className="hidden sm:inline">My Helper Tools</span>
+              <span className="sm:hidden">Helper</span>
             </TabsTrigger>
           )}
         </TabsList>

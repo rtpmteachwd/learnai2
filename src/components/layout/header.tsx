@@ -97,7 +97,7 @@ export function Header({ onMenuClick }: HeaderProps) {
     switch (user?.role) {
       case 'STUDENT': return 'Student';
       case 'TEACHER': return 'Teacher';
-      case 'ADMIN': return 'Administrator';
+      case 'ADMIN': return 'Admin';
       default: return 'User';
     }
   };
@@ -273,27 +273,30 @@ export function Header({ onMenuClick }: HeaderProps) {
   return (
     <>
       <header className={cn(
-        'fixed top-0 right-0 h-16 bg-card border-b flex items-center justify-between px-4 z-30 transition-all duration-300',
-        sidebarOpen ? 'left-64' : 'left-16'
+        'fixed top-0 right-0 h-16 bg-card border-b flex items-center justify-between px-3 md:px-4 z-30 transition-all duration-300',
+        // Mobile: always full width with left padding for menu button
+        'left-0 md:left-64',
+        // Desktop: adjust based on sidebar
+        sidebarOpen ? 'md:left-64' : 'md:left-16'
       )}>
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={onMenuClick}>
-            <Menu className="h-5 w-5" />
-          </Button>
+        <div className="flex items-center gap-2 md:gap-4">
+          {/* Mobile: Leave space for hamburger menu */}
+          <div className="w-10 md:hidden" />
           
+          {/* Desktop: Role badges */}
           <div className="hidden md:flex items-center gap-2">
             <Badge className={cn('text-white', getRoleColor())}>
               {getRoleLabel()}
             </Badge>
             {user?.disabilityType && user.disabilityType !== 'NONE' && (
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="hidden lg:flex">
                 {user.disabilityType.replace('_', ' ')}
               </Badge>
             )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
           {/* Search Button */}
           <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)}>
             <Search className="h-5 w-5" />
@@ -386,7 +389,7 @@ export function Header({ onMenuClick }: HeaderProps) {
 
       {/* Search Dialog */}
       <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg mx-4">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Search className="h-5 w-5" />
